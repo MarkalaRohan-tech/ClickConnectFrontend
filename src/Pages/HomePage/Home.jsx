@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import Hero from "./Hero";
 import FeatureBlock from "../../components/FeatureBlock";
 import { AuthContext } from "../../contexts/AuthContext";
+import { motion } from "framer-motion";
 
 const Home = () => {
   const { isAuthenticated, logout, loading } = useContext(AuthContext);
@@ -11,9 +12,14 @@ const Home = () => {
     <div className="overflow-x-hidden">
       <Hero />
 
-      <h1 className="text-center text-5xl font-semibold dancing-script m-5">
+      <motion.h1 className="text-center text-5xl font-semibold dancing-script m-5 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+      initial={{ scale: 0.95, opacity: 0.7 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 2, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+      >
         Features
-      </h1>
+      </motion.h1>
+
       <div className="w-[80%] flex flex-col justify-center items-center m-auto">
         <FeatureBlock
           align="left"
@@ -123,9 +129,13 @@ const Home = () => {
         </FeatureBlock>
       </div>
       <div className="mt-10 text-center">
-        <h1 className="text-6xl dancing-script text-white font-bold m-5">
+        <motion.h1 className="text-6xl dancing-script text-white font-bold m-5"
+        initial={{ opacity: 0.10, y: -10 }}
+        animate={{ opacity: 1 , y: 0}}
+        transition={{ duration: 2, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+        >
           Explore more with us ...
-        </h1>
+        </motion.h1>
 
         {!loading && (
           <div className="flex justify-center gap-5">

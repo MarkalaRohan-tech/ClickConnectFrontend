@@ -14,7 +14,7 @@ const Navbar = () => {
 
   return (
     <div className="navbar bg-base-100 shadow-sm dark:bg-black dark:text-white flex justify-between px-10">
-      <NavLink className="flex items-center gap-2" to="/">
+      <NavLink className="flex items-center gap-2 hover:scale-105 transition-transform" to="/">
         <img
           src="/Icon1.png"
           alt="ClickConnect"
@@ -30,7 +30,7 @@ const Navbar = () => {
             className={({ isActive }) =>
               isActive
                 ? "text-white font-semibold"
-                : "text-gray-400 hover:text-black"
+                : "text-gray-400 hover:text-white"
             }
           >
             Home
@@ -42,7 +42,7 @@ const Navbar = () => {
             className={({ isActive }) =>
               isActive
                 ? "text-white font-semibold"
-                : "text-gray-400 hover:text-black"
+                : "text-gray-400 hover:text-white"
             }
           >
             Browse
@@ -57,7 +57,7 @@ const Navbar = () => {
               className={({ isActive }) =>
                 isActive
                   ? "text-white font-semibold"
-                  : "text-gray-400 hover:text-black"
+                  : "text-gray-400 hover:text-white"
               }
             >
               Dashboard
@@ -73,7 +73,7 @@ const Navbar = () => {
               className={({ isActive }) =>
                 isActive
                   ? "text-white font-semibold"
-                  : "text-gray-400 hover:text-black"
+                  : "text-gray-400 hover:text-white"
               }
             >
               Photographer
@@ -89,7 +89,7 @@ const Navbar = () => {
               className={({ isActive }) =>
                 isActive
                   ? "text-white font-semibold"
-                  : "text-gray-400 hover:text-black"
+                  : "text-gray-400 hover:text-white"
               }
             >
               Admin
