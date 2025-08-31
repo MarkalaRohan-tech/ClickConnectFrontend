@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink,useNavigate } from "react-router-dom";
 import SlidingToggle from "../../components/SlidingToggle";
-import axios from "axios";
+import api from "../../api";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Notification from "../../../Services/Notification";
@@ -107,7 +107,7 @@ const Register = () => {
           role: role,
         };
       console.log("User Registration:", userData);
-      const res = await axios.post("/api/auth/register", userData);
+      const res = await api.post("/api/auth/register", userData);
         localStorage.setItem("User", JSON.stringify(res.data));
         Notification.success("Registration successful!");
         setTimeout(() => {
@@ -122,7 +122,7 @@ const Register = () => {
     } else {
       console.log("Photographer Registration:", formData);
       try {
-        const res = await axios.post("/api/photographer/auth/register", formData);
+        const res = await api.post("/api/photographer/auth/register", formData);
         Notification.success("Registration successful!");
         setTimeout(() => {
           navigate("/login");

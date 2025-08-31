@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
+import api from "../../api";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Notification from "../../../Services/Notification";
@@ -124,7 +124,7 @@ const VerificationForm = () => {
 
     try {
       const requiredData = { email: formData.email, userType: role };
-      const res = await axios.post("/api/password-reset/forgot", requiredData);
+      const res = await api.post("/api/password-reset/forgot", requiredData);
 
       console.log(res.data.message);
       Notification.success("OTP sent successfully!");
@@ -160,7 +160,7 @@ const VerificationForm = () => {
         userType: role,
       };
 
-      const res = await axios.post("/api/password-reset/reset", requiredData);
+      const res = await api.post("/api/password-reset/reset", requiredData);
 
       if (res.data.error) {
         Notification.error(res.data.error);

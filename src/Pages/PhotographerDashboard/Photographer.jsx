@@ -21,7 +21,7 @@ import {
 } from "./components/Modals";
 import { ToastContainer } from "react-toastify";
 import Notification from "../../../Services/Notification";
-import axios from "axios";
+import api from "../../api";
 
 const PhotographerDashboard = () => {
   const [profile, setProfile] = useState({
@@ -112,7 +112,7 @@ const [profilePic, setProfilePic] = useState("");
   
       const updateBookingStatus = async (id, status) => {
         try {
-          const res = await axios.patch(
+          const res = await api.patch(
             `/api/bookings/${id}/status`,
             { status },
             { withCredentials: true }
@@ -126,7 +126,7 @@ const [profilePic, setProfilePic] = useState("");
   };
   const updateProfile = async () => {
     try {
-      const res = await axios.patch(
+      const res = await api.patch(
         `/api/profiles/${profile._id}`,
         profileForm,
         { withCredentials: true }
@@ -147,7 +147,7 @@ const [profilePic, setProfilePic] = useState("");
 const handleSaveProfilePortfolio = () => {
   if (!profilePic) return;
 
-  axios
+  api
     .patch(`/api/profiles/${profile._id}/pictures`, {
       profilePic,
       portfolio,
@@ -193,7 +193,7 @@ const handleSaveProfilePortfolio = () => {
           return;
         }
 
-        const response = await axios.get(`/api/profiles/${userId}`, {
+        const response = await api.get(`/api/profiles/${userId}`, {
           withCredentials: true,
         });
         const data = response.data;

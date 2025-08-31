@@ -7,7 +7,7 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react";
-import axios from "axios";
+import api from "../../api";
 
 const User = () => {
   const user = JSON.parse(localStorage.getItem("User"));
@@ -24,7 +24,7 @@ const User = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await axios.get(`/api/bookings/mine/${user.id}`);
+        const res = await api.get(`/api/bookings/mine/${user.id}`);
         const data = res.data;
         setBookingDetails({
           totalBookings: data.totalBookings,

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Users, UserCheck, Star, Clock, CheckCircle, UserX } from "lucide-react";
 import StatCard from "./components/StatCard";
 import UsersTable from "./components/UsersTable";
-import axios from "axios";
+import api from "../../api"
 import { ToastContainer } from "react-toastify";
 import PhotographerTable from "./components/PhotographerTable";
 
@@ -28,7 +28,7 @@ const Admin = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get("/api/admin/stats", {
+        const res = await api.get("/api/admin/stats", {
           withCredentials: true,
         });
         console.log(res.data);

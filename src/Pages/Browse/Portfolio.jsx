@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios"; // Add this import
+import api from "../../api";
 import { Star, Calendar, Award, Users, MapPin,IndianRupee } from "lucide-react";
 import { detailedProfiles, defaultPackages } from "./portfolioData";
 import PortfolioHeader from "./components/PortfolioHeader";
@@ -34,7 +34,7 @@ const Portfolio = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await axios.get(`/api/reviews/${id}`);
+        const res = await api.get(`/api/reviews/${id}`);
         setReviews(res.data);
       } catch (error) {
         console.error(error);
@@ -48,7 +48,7 @@ const Portfolio = () => {
       try {
         setLoading(true);
         setError(null);
-        const res = await axios.get(`/api/profiles/getProtfolio/${id}`, {
+        const res = await api.get(`/api/profiles/getProtfolio/${id}`, {
           withCredentials: true,
         });
         console.log("Response DataL",res.data);
@@ -215,7 +215,7 @@ const Portfolio = () => {
         userId: user.id,
         photographerId: profileData._id
       };
-      const res = await axios.post("/api/reviews", reviewPayload, { withCredentials: true });
+      const res = await api.post("/api/reviews", reviewPayload, { withCredentials: true });
       console.log(res.data);
       Notification.success(res.data.message);
     } catch (error) {
@@ -237,7 +237,7 @@ const Portfolio = () => {
           photographerId: id,
           selectedPackage: selectedPackage,
         };
-        const res = await axios.post("/api/bookings", bookingPayload, { withCredentials: true });
+        const res = await api.post("/api/bookings", bookingPayload, { withCredentials: true });
         console.log(res.data);
         Notification.success(res.data.message);
       } catch (error) {

@@ -4,7 +4,7 @@ import SlidingToggle from "../../components/SlidingToggle";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Notification from "../../../Services/Notification";
-import axios from "axios";
+import api from "../../api";
 import { AuthContext } from "../../contexts/AuthContext";
 
 const Login = () => {
@@ -62,7 +62,7 @@ const Login = () => {
 
     if (role === "user") {
       try {
-        const res = await axios.post("/api/auth/login", formData, {
+        const res = await api.post("/api/auth/login", formData, {
           withCredentials: true,
         });
 
@@ -91,7 +91,7 @@ const Login = () => {
       }
     } else if (role === "photographer") {
       try {
-        const res = await axios.post("/api/photographer/auth/login", formData, {
+        const res = await api.post("/api/photographer/auth/login", formData, {
           withCredentials: true,
         });
 
@@ -120,7 +120,7 @@ const Login = () => {
       try {
         console.log("Admin Login Attempt:", formData);
 
-        const res = await axios.post("/api/admin/auth/login", formData, {
+        const res = await api.post("/api/admin/auth/login", formData, {
           withCredentials: true,
         });
 

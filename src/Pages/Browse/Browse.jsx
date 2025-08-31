@@ -3,7 +3,7 @@ import ProfileCard from "../../components/ProfileCard";
 import BrowseHeader from "../../components/BrowseHeader";
 import NoResultsFound from "../../components/NoResultsFound";
 import { ToastContainer } from "react-toastify";
-import axios from "axios";
+import api from "../../api";
 
 const Browse = () => {
   const [profiles, setProfiles] = useState([]);
@@ -16,7 +16,7 @@ const Browse = () => {
     const fetchProfiles = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.get("/api/profiles", { withCredentials: true });
+        const res = await api.get("/api/profiles", { withCredentials: true });
         console.log(res.data);
         setProfiles(res.data);
         setFilteredProfiles(res.data);
