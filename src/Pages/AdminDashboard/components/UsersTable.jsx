@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { UserX, CheckSquare, Trash, AlertCircle, Users } from "lucide-react";
 import StatusBadge from "./StatusBadge";
-import axios from "axios";
+import api from "../../api";
 
 const UserTable = () => {
   const [usersData, setUsersData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+  const [error, setError] = useState(null)
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -18,7 +17,7 @@ const UserTable = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("/api/admin/users", {
+      const res = await api.get("/api/admin/users", {
         withCredentials: true,
         timeout: 10000,
       });
@@ -61,7 +60,7 @@ const UserTable = () => {
     }
 
     try {
-      await axios.delete(`/api/admin/users/${id}`, {
+      await api.delete(`/api/admin/users/${id}`, {
         withCredentials: true,
         timeout: 5000,
       });
@@ -75,7 +74,7 @@ const UserTable = () => {
 
   const handleApprove = async (id) => {
     try {
-      const res = await axios.patch(
+      const res = await api.patch(
         `/api/admin/users/${id}/approve`,
         { status: "approved" }, // Send status in body
         {
@@ -109,7 +108,7 @@ const UserTable = () => {
     }
 
     try {
-      const res = await axios.patch(
+      const res = await api.patch(
         `/api/admin/users/${id}/block`,
         {},
         {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { UserX, Star, CheckSquare, Trash, AlertCircle } from "lucide-react";
 import StatusBadge from "./StatusBadge";
-import axios from "axios";
+import api from "../../api";
 
 const PhotographerTable = () => {
   const [photographersData, setPhotographersData] = useState([]);
@@ -18,7 +18,7 @@ const PhotographerTable = () => {
       setLoading(true);
       setError(null);
 
-      const res = await axios.get("/api/admin/photographers", {
+      const res = await api.get("/api/admin/photographers", {
         withCredentials: true,
         timeout: 10000, // 10 second timeout
       });
@@ -58,7 +58,7 @@ const PhotographerTable = () => {
     }
 
     try {
-      await axios.delete(`/api/admin/photographers/${id}`, {
+      await api.delete(`/api/admin/photographers/${id}`, {
         withCredentials: true,
         timeout: 5000,
       });
@@ -73,7 +73,7 @@ const PhotographerTable = () => {
 
   const handleApprove = async (id) => {
     try {
-      const res = await axios.patch(
+      const res = await api.patch(
         `/api/admin/photographers/${id}/approve`,
         {},
         {
@@ -110,7 +110,7 @@ const PhotographerTable = () => {
     }
 
     try {
-      await axios.patch(
+      await api.patch(
         `/api/admin/photographers/${id}/block`,
         {},
         {
