@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { UserX, CheckSquare, Trash, AlertCircle, Users } from "lucide-react";
 import StatusBadge from "./StatusBadge";
-import api from "../../api";
+import api from "../../../api";
 
 const UserTable = () => {
   const [usersData, setUsersData] = useState([]);
