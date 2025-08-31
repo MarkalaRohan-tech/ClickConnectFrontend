@@ -198,6 +198,11 @@ const VerificationForm = () => {
     transition-colors duration-200
   `;
 
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+
+
   if (isVerified) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 flex justify-center items-center p-4">
@@ -345,6 +350,7 @@ const VerificationForm = () => {
             {/* OTP, Password, Confirm Password Fields */}
             {isOtpSent && (
               <>
+                {/* OTP Field */}
                 <div className="transform hover:scale-[1.02] transition-transform duration-200">
                   <label className={labelClass}>OTP</label>
                   <input
@@ -360,39 +366,43 @@ const VerificationForm = () => {
                     </p>
                   )}
                 </div>
-                <div className="transform hover:scale-[1.02] transition-transform duration-200">
+                {/* New Password Field */}
+                <div className="relative">
                   <label className={labelClass}>New Password</label>
                   <input
-                    type="password"
+                    type={showNewPassword ? "text" : "password"}
                     placeholder="Enter new password"
-                    className={inputClass}
+                    className={`${inputClass} pr-20`}
                     value={formData.password}
-                    onChange={(e) =>
-                      handleInputChange("password", e.target.value)
-                    }
+                    onChange={(e) => handleInputChange("password", e.target.value)}
                   />
-                  {errors.password && (
-                    <p className="text-red-500 text-sm mt-2 animate-pulse">
-                      {errors.password}
-                    </p>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword((prev) => !prev)}
+                    className="absolute right-6 top-1/2  font-semibold text-sm text-gray-800 hover:cursor-pointer"
+                    tabIndex={-1}
+                  >
+                    {showNewPassword ? "Hide" : "Show"}
+                  </button>
                 </div>
-                <div className="transform hover:scale-[1.02] transition-transform duration-200">
+                {/* Confirm Password Field */}
+                <div className="relative">
                   <label className={labelClass}>Confirm Password</label>
                   <input
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm new password"
-                    className={inputClass}
+                    className={`${inputClass} pr-20`}
                     value={formData.confirmPassword}
-                    onChange={(e) =>
-                      handleInputChange("confirmPassword", e.target.value)
-                    }
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                   />
-                  {errors.confirmPassword && (
-                    <p className="text-red-500 text-sm mt-2 animate-pulse">
-                      {errors.confirmPassword}
-                    </p>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-6 top-1/2  font-semibold text-sm text-gray-800 hover:cursor-pointer"
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? "Hide" : "Show"}
+                  </button>
                 </div>
               </>
             )}

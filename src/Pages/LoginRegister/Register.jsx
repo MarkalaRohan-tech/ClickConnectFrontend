@@ -24,6 +24,7 @@ const Register = () => {
     genres: "",
   });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false); // Add this state
 
   const validate = () => {
     const newErrors = {};
@@ -237,42 +238,50 @@ const Register = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="transform hover:scale-[1.02] transition-transform duration-200">
+              <div className="relative transform hover:scale-[1.02] transition-transform duration-200">
                 <label className={labelClass}>Password</label>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Create a strong password"
-                  className={inputClass}
+                  className={`${inputClass} pr-20`} // Add right padding for button
                   value={formData.password}
                   onChange={(e) =>
                     handleInputChange("password", e.target.value)
                   }
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-6 top-1/2 font-semibold text-sm text-gray-800 hover:cursor-pointer"
+                  tabIndex={-1}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-2 animate-pulse">
                     {errors.password}
                   </p>
                 )}
               </div>
-                <div
-                  key="user-phone"
-                  className="transform hover:scale-[1.02] transition-transform duration-200 opacity-0"
-                  style={{ animation: "slideInRight 0.5s ease-out both" }}
-                >
-                  <label className={labelClass}>Phone Number</label>
-                  <input
-                    type="tel"
-                    placeholder="Enter your phone number"
-                    className={inputClass}
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                  />
-                  {errors.phone && (
-                    <p className="text-red-500 text-sm mt-2 animate-pulse">
-                      {errors.phone}
-                    </p>
-                  )}
-                </div>
+              <div
+                key="user-phone"
+                className="transform hover:scale-[1.02] transition-transform duration-200 opacity-0"
+                style={{ animation: "slideInRight 0.5s ease-out both" }}
+              >
+                <label className={labelClass}>Phone Number</label>
+                <input
+                  type="tel"
+                  placeholder="Enter your phone number"
+                  className={inputClass}
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
+                />
+                {errors.phone && (
+                  <p className="text-red-500 text-sm mt-2 animate-pulse">
+                    {errors.phone}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Photographer specific fields */}

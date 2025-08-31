@@ -52,7 +52,10 @@ const Login = () => {
     }
   };
 
-  // In your Login component, update the handleSubmit function:
+
+  
+const [showPassword, setShowPassword] = useState(false);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -236,15 +239,23 @@ const Login = () => {
             </div>
 
             {/* Password Field */}
-            <div className="transform hover:scale-[1.02] transition-transform duration-200">
+            <div className="relative transform hover:scale-[1.02] transition-transform duration-200">
               <label className={labelClass}>Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                className={inputClass}
+                className={`${inputClass} pr-20`} // Add right padding so button doesn't overlap text
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-6 top-1/2  text-sm font-semibold text-gray-800 hover:cursor-pointer"
+                tabIndex={-1}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
               {errors.password && (
                 <p className="text-red-500 text-sm mt-2 animate-pulse">
                   {errors.password}
