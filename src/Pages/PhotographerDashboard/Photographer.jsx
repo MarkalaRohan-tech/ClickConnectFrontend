@@ -30,7 +30,7 @@ const PhotographerDashboard = () => {
     phone: "",
     location: "",
     genres: [],
-    pricing: { baseRate: 0 },
+    pricing: { baseRate: 0, packages: {} },
     email: "",
     profilePic: "",
     rating: 0,
@@ -44,54 +44,27 @@ const PhotographerDashboard = () => {
   const [portfolio, setPortfolio] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-const [showProfilePortfolioModal, setShowProfilePortfolioModal] =
-  useState(false);
-const [profilePic, setProfilePic] = useState("");
+  const [showProfilePortfolioModal, setShowProfilePortfolioModal] =
+    useState(false);
+  const [profilePic, setProfilePic] = useState("");
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [editingPortfolioIndex, setEditingPortfolioIndex] = useState(null);
-  const [portfolioForm, setPortfolioForm] = useState([]);
   const [profileForm, setProfileForm] = useState({
     displayName: "",
     bio: "",
     phone: "",
     location: "",
     genres: [],
-    pricing: { baseRate: 0 },
+    pricing: {
+      baseRate: 0,
+      packages: {
+        basic: { price: 0, duration: "" },
+        standard: { price: 0, duration: "" },
+        premium: { price: 0, duration: "" },
+      },
+    },
   });
 
   const [selectedBooking, setSelectedBooking] = useState(null);
-
-  const openPortfolioModal = (index = null) => {
-    setEditingPortfolioIndex(index);
-    if (index !== null) {
-      setPortfolioForm({
-        url: portfolio[index].url,
-        caption: portfolio[index].caption,
-      });
-    } else {
-      setPortfolioForm({ url: "", caption: "" });
-    }
-    setShowPortfolioModal(true);
-  };
-
-  const handlePortfolioConfirm = () => {
-    if (!portfolioForm.url || !portfolioForm.caption) return;
-    if (editingPortfolioIndex !== null) {
-      setPortfolio((prev) =>
-        prev.map((item, idx) =>
-          idx === editingPortfolioIndex ? { ...item, ...portfolioForm } : item
-        )
-      );
-    } else {
-      setPortfolio((prev) => [
-        ...prev,
-        { ...portfolioForm, _id: Date.now().toString() },
-      ]);
-    }
-    setShowPortfolioModal(false);
-    setEditingPortfolioIndex(null);
-    setPortfolioForm({ url: "", caption: "" });
-  };
 
   const addGenre = () => {
     const newGenre = prompt("Enter new genre:");
@@ -109,33 +82,30 @@ const [profilePic, setProfilePic] = useState("");
       genres: prev.genres.filter((genre) => genre !== genreToRemove),
     }));
   };
-  
-      const updateBookingStatus = async (id, status) => {
-        try {
-          const res = await api.patch(
-            `/api/bookings/${id}/status`,
-            { status },
-            { withCredentials: true }
-          );
-          res.status === 200
-            ? Notification.success(res.data.message)
-            : Notification.error(res.data.message);
-        } catch (error) {
-          Notification.error(error.response?.data?.message || error.message);
-        }
-  };
-  const updateProfile = async () => {
+
+  const updateBookingStatus = async (id, status) => {
     try {
       const res = await api.patch(
-        `/api/profiles/${profile._id}`,
-        profileForm,
+        `/api/bookings/${id}/status`,
+        { status },
         { withCredentials: true }
       );
 
       if (res.status === 200) {
-        setProfile(res.data); // update local profile
-        Notification.success("Profile updated successfully");
-        setShowProfileModal(false); // close correct modal
+        Notification.success(res.data.message);
+        // Update the booking in the local state
+        setBookings((prev) =>
+          prev.map((booking) =>
+            booking._id === id ? { ...booking, status } : booking
+          )
+        );
+        // Update counts based on status change
+        if (status === "completed") {
+          setCompletedBookings((prev) => prev + 1);
+          setPendingBookings((prev) => prev - 1);
+        } else if (status === "rejected") {
+          setPendingBookings((prev) => prev - 1);
+        }
       } else {
         Notification.error(res.data.message);
       }
@@ -144,27 +114,89 @@ const [profilePic, setProfilePic] = useState("");
     }
   };
 
-const handleSaveProfilePortfolio = () => {
-  if (!profilePic) return;
+  const updateProfile = async () => {
+    try {
+      const res = await api.patch(`/api/profiles/${profile._id}`, profileForm, {
+        withCredentials: true,
+      });
 
-  api
-    .patch(`/api/profiles/${profile._id}/pictures`, {
-      profilePic,
-      portfolio,
-    })
-    .then((res) => {
-      setProfile(res.data);
-      Notification.success("Profile updated successfully");
-      setShowProfilePortfolioModal(false);
-    })
-    .catch((err) => {
+      if (res.status === 200) {
+        setProfile(res.data);
+        Notification.success("Profile updated successfully");
+        setShowProfileModal(false);
+      } else {
+        Notification.error(res.data.message);
+      }
+    } catch (error) {
+      Notification.error(error.response?.data?.message || error.message);
+    }
+  };
+
+  // Function to properly open the modal with current data
+  const openProfilePortfolioModal = () => {
+    // Initialize with current profile data
+    setProfilePic(profile.profilePic || "");
+
+    // Initialize portfolio with current data, ensure we have at least one empty input
+    const currentPortfolio = profile.portfolio
+      ? profile.portfolio.map((item) =>
+          typeof item === "string" ? item : item.url || ""
+        )
+      : [];
+
+    // If portfolio is empty, start with one empty input
+    setPortfolio(currentPortfolio.length > 0 ? currentPortfolio : [""]);
+    setShowProfilePortfolioModal(true);
+  };
+
+  // Fixed save function to handle portfolio removal properly
+  const handleSaveProfilePortfolio = async () => {
+    try {
+      // Filter out empty URLs and limit to 4 items
+      const cleanedPortfolio = portfolio
+        .filter((url) => url && url.trim() !== "")
+        .slice(0, 4);
+
+      const updateData = {
+        profilePic: profilePic || null,
+        portfolio: cleanedPortfolio,
+      };
+
+      const response = await api.patch(
+        `/api/profiles/${profile._id}/pictures`,
+        updateData,
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        setProfile(response.data);
+        Notification.success("Profile updated successfully");
+        setShowProfilePortfolioModal(false);
+      } else {
+        Notification.error(response.data.message || "Failed to update profile");
+      }
+    } catch (err) {
+      console.error("Error updating profile:", err);
       Notification.error(err.response?.data?.message || err.message);
-    });
-};
+    }
+  };
 
+  // Modal close handler with proper state reset
+  const handleModalClose = () => {
+    setShowProfilePortfolioModal(false);
+    // Reset state when closing without saving
+    setProfilePic(profile.profilePic || "");
+    setPortfolio(
+      profile.portfolio
+        ? profile.portfolio.map((item) =>
+            typeof item === "string" ? item : item.url || ""
+          )
+        : [""]
+    );
+  };
 
-    // Usage
-    const onReject = (id) => updateBookingStatus(id, "rejected");
+  // Usage functions
+  const onReject = (id) => updateBookingStatus(id, "rejected");
   const onApprove = (id) => updateBookingStatus(id, "approved");
   const onComplete = (id) => updateBookingStatus(id, "completed");
   const onSaveChanges = () => updateProfile();
@@ -211,7 +243,14 @@ const handleSaveProfilePortfolio = () => {
             phone: photographerData.phone || "",
             location: photographerData.location || "",
             genres: photographerData.genres || [],
-            pricing: photographerData.pricing || { baseRate: 0 },
+            pricing: photographerData.pricing || {
+              baseRate: 0,
+              packages: {
+                basic: { price: 0, duration: "" },
+                standard: { price: 0, duration: "" },
+                premium: { price: 0, duration: "" },
+              },
+            },
           });
         }
 
@@ -224,7 +263,7 @@ const handleSaveProfilePortfolio = () => {
         setCompletedBookings(data.completedBookings || 0);
 
         // Handle rating data - it might be in avgRating or reviews
-        const avgRating = data.avgRating  || 0;
+        const avgRating = data.avgRating || 0;
         setRating(typeof avgRating === "number" ? avgRating : 0);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -237,7 +276,7 @@ const handleSaveProfilePortfolio = () => {
     };
 
     fetchDashboardData();
-  }, []); // Empty dependency array - only run once on mount
+  }, []);
 
   // Handle loading state
   if (loading) {
@@ -272,31 +311,33 @@ const handleSaveProfilePortfolio = () => {
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row justify-center md:justify-between items-center mb-8">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Photographer Dashboard</h1>
-          <p className="text-gray-400">
+          <h1 className="text-2xl md:text-4xl text-center md:text-left font-bold mb-2">
+            Photographer Dashboard
+          </h1>
+          <p className="text-gray-400 text-sm text-center md:text-left md:text-md">
             Welcome back, {profile.displayName || "Photographer"}
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 mt-3 md:mt-0">
           <button
             onClick={() => setShowProfileModal(true)}
-            className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-black border border-white text-white rounded hover:bg-white hover:text-black transition-colors"
+            className="flex cursor-pointer text-xs md:text-md items-center gap-2 px-4 py-4 md:py-2 bg-black border border-white text-white rounded-lg hover:bg-white hover:text-black transition-colors"
           >
             <Edit className="w-4 h-4" />
             Edit Profile
           </button>
           <button
-            onClick={() => setShowProfilePortfolioModal(true)}
-            className="flex cursor-pointer items-center gap-2 px-4 py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors"
+            onClick={openProfilePortfolioModal}
+            className="flex cursor-pointer text-xs md:text-md items-center gap-2 px-4 py-4 md:py-2 bg-white text-black rounded-lg hover:bg-gray-200 transition-colors"
           >
             <Plus className="w-4 h-4" /> Update Profile & Portfolio
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 w-full gap-6 mb-8">
         <StatCard
           icon={Clock}
           color="text-orange-500"
@@ -466,7 +507,7 @@ const handleSaveProfilePortfolio = () => {
       {/* Modals */}
       <PortfolioModal
         open={showProfilePortfolioModal}
-        onClose={() => setShowProfilePortfolioModal(false)}
+        onClose={handleModalClose}
         profilePic={profilePic}
         setProfilePic={setProfilePic}
         portfolio={portfolio}
@@ -486,15 +527,9 @@ const handleSaveProfilePortfolio = () => {
 
       <BookingModal
         booking={selectedBooking}
-        onConfirm={() => {
-          onApprove(selectedBooking._id);
-        }}
-        onReject={() => {
-          onReject(selectedBooking._id);
-        }}
-        onComplete={() => {
-          onComplete(selectedBooking._id);
-        }}
+        onConfirm={() => onApprove(selectedBooking._id)}
+        onReject={() => onReject(selectedBooking._id)}
+        onComplete={() => onComplete(selectedBooking._id)}
         onClose={() => setSelectedBooking(null)}
       />
 

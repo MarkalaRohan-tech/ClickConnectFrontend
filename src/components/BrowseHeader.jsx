@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, SortAsc } from "lucide-react";
+import { Search } from "lucide-react";
 
 const BrowseHeader = ({ onSearch, onSort, searchQuery, sortOrder }) => {
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
@@ -47,24 +47,25 @@ const BrowseHeader = ({ onSearch, onSort, searchQuery, sortOrder }) => {
         Browse Photographers
       </h1>
 
-      <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+      {/* All in one row */}
+      <div className="flex flex-row items-center gap-3 w-full lg:w-auto">
         <form
           onSubmit={handleSearchSubmit}
-          className="flex items-center w-full sm:w-auto"
+          className="flex flex-row items-center gap-2 flex-1"
         >
-          <label className="input flex items-center border border-gray-300 rounded-lg px-3 py-2 bg-white min-w-[250px]">
+          <label className="flex w-[180px] md:w-[350px] items-center border border-gray-300 rounded-lg px-3 py-2 bg-white flex-1">
             <Search className="h-5 w-5 opacity-50 mr-2 text-gray-500" />
             <input
               type="search"
               value={localSearchQuery}
               onChange={(e) => setLocalSearchQuery(e.target.value)}
               placeholder="Search by name, location, or genre..."
-              className="outline-none flex-1 text-black placeholder-gray-500"
+              className="outline-none w-full flex-1 text-black placeholder-gray-500"
             />
           </label>
           <button
             type="submit"
-            className="btn ml-2 bg-white text-black border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="bg-white cursor-pointer text-black border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap"
           >
             Search
           </button>
@@ -72,7 +73,7 @@ const BrowseHeader = ({ onSearch, onSort, searchQuery, sortOrder }) => {
 
         <button
           onClick={handleSortChange}
-          className="btn bg-white text-black border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2 whitespace-nowrap"
+          className="bg-white text-black cursor-pointer border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2 whitespace-nowrap"
           title={getSortButtonText()}
         >
           <i className={`fas ${getSortIcon()}`}></i>

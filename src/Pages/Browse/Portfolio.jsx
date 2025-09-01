@@ -216,8 +216,7 @@ const Portfolio = () => {
         photographerId: profileData._id
       };
       const res = await api.post("/api/reviews", reviewPayload, { withCredentials: true });
-      console.log(res.data);
-      Notification.success(res.data.message);
+      Notification.success("Review submitted successfully");
     } catch (error) {
       Notification.error(error.response?.data?.message || error.message);
     }
@@ -342,7 +341,7 @@ const Portfolio = () => {
         onClose={() => setEnlargedImage(null)}
       />
 
-      <div className="max-w-3xl mx-auto mt-16 mb-20 bg-gray-900 rounded-2xl p-8 border border-gray-700">
+      <div className="max-w-3xl mx-auto mt-16 mb-20 bg-gray-900 md:rounded-2xl p-8 border border-gray-700">
         <h2 className="text-2xl font-bold mb-6 text-center">Leave a Review</h2>
         <form
           className="mb-10"

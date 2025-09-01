@@ -1,6 +1,7 @@
 import React from 'react'
 
-const PricingSection = ({ packages = [], onBook }) => (
+const PricingSection = ({ packages = [], onBook }) => {
+  return(
   <div className="px-6 py-10">
     <div className="max-w-6xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-10">Pricing Packages</h2>
@@ -17,7 +18,7 @@ const PricingSection = ({ packages = [], onBook }) => (
             </div>
             <p className="text-gray-400 mb-6">{pkg.duration}</p>
             <ul className="space-y-3 mb-8">
-              {(pkg.services || []).map((service, serviceIndex) => (
+              {(pkg.features || []).map((service, serviceIndex) => (
                 <li
                   key={serviceIndex}
                   className="flex items-center text-gray-300"
@@ -28,7 +29,7 @@ const PricingSection = ({ packages = [], onBook }) => (
               ))}
             </ul>
             <button
-              className="w-full py-3 rounded-xl font-semibold bg-gradient-to-r from-white to-gray-300 text-black transition-all duration-300 transform hover:scale-105 shadow-lg mt-2"
+              className="w-full py-3 cursor-pointer rounded-xl font-semibold bg-gradient-to-r from-white to-gray-300 text-black transition-all duration-300 transform hover:scale-105 shadow-lg mt-2"
               onClick={onBook}
             >
               Book Now
@@ -38,7 +39,7 @@ const PricingSection = ({ packages = [], onBook }) => (
       </div>
     </div>
   </div>
-);
+)};
 
 export default PricingSection
 

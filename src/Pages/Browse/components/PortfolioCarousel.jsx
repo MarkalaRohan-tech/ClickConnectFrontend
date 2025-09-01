@@ -14,7 +14,7 @@ const PortfolioCarousel = ({ item, index, getIndex, onPrev, onNext, onDot, onEnl
 
           <button
             onClick={() => onEnlarge(item.url[getIndex(index)])}
-            className="absolute top-4 right-4 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-300"
+            className="absolute cursor-pointer top-4 right-4 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-300"
           >
             <Maximize2 className="w-5 h-5" />
           </button>
@@ -23,13 +23,13 @@ const PortfolioCarousel = ({ item, index, getIndex, onPrev, onNext, onDot, onEnl
             <>
               <button
                 onClick={() => onPrev(index)}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-300"
+                className="absolute cursor-pointer left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-300"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
               <button
                 onClick={() => onNext(index)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-300"
+                className="absolute cursor-pointer right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all duration-300"
               >
                 <ChevronRight className="w-6 h-6" />
               </button>

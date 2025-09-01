@@ -33,6 +33,7 @@ const User = () => {
           rejectedBookings: data.rejectedBookings
         });
         setActivities(data.activities);
+        console.log(data)
       } catch (err) {
         console.error(err);
       }
@@ -101,19 +102,21 @@ const User = () => {
     <div className="min-h-screen bg-black">
       {/* Header */}
       <div className="border-b-2 border-b-white rounded-2xl mx-5 px-6 py-6">
-        <div className="max-w-6xl flex gap-5 items-center mx-auto">
-          <h1 className="text-3xl font-semibold text-white">Dashboard</h1>
-          <p className="text-gray-400 mt-1">Welcome back, {user.name}</p>
+        <div className="max-w-6xl flex flex-col md:flex-row gap-5 items-center mx-auto">
+          <h1 className="text-2xl md:text-3xl font-semibold text-white">
+            Dashboard
+          </h1>
+          <p className="text-gray-400  mt-1">Welcome back, {user.name}</p>
         </div>
       </div>
 
       <div className="p-6">
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className="max-w-6xl mx-auto flex flex-col items-center justify-center space-y-8">
           {/* Profile Section */}
           {/* ...profile section unchanged... */}
 
           {/* Statistics Cards */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 w-[80%] md:w-full md:grid-cols-4 gap-4">
             {stats.map((stat, index) => (
               <div
                 key={index}
@@ -124,21 +127,21 @@ const User = () => {
                     <div className="p-2 flex justify-center items-center text-2xl bg-opacity-10 rounded-lg">
                       <stat.icon className="w-6 h-6" />
                       &nbsp;
-                      <p className="text-2xl font-bold">
-                        {stat.count}
-                      </p>
+                      <p className="text-2xl font-bold">{stat.count}</p>
                     </div>
                   </div>
                 )}
                 {stat && stat.label && (
-                  <p className="text-gray-600 text-sm">{stat.label}</p>
+                  <p className="text-gray-600 text-md font-bold md:text-sm">
+                    {stat.label}
+                  </p>
                 )}
               </div>
             ))}
           </div>
 
           {/* Recent Activities */}
-          <div className="bg-white rounded-xl p-6 shadow-lg">
+          <div className="bg-white rounded-xl p-6 shadow-lg w-full">
             <h2 className="text-xl font-bold text-black mb-6">
               Recent Activities
             </h2>
@@ -160,13 +163,13 @@ const User = () => {
                 activities.map((activity) => (
                   <div
                     key={activity.id}
-                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="flex flex-col md:flex-row items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <div className="p-2 bg-white rounded-lg shadow-sm">
                       {getActivityIcon(activity.status)}
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1">
+                      <div className="flex flex-col md:flex-row items-center gap-3 mb-1">
                         <h4 className="font-semibold text-black">
                           {activity.photographer}
                         </h4>
@@ -178,8 +181,12 @@ const User = () => {
                           {activity.status}
                         </span>
                       </div>
-                      <p className="text-gray-600 text-sm">{activity.event}</p>
-                      <p className="text-gray-500 text-xs">{activity.date}</p>
+                      <p className="text-gray-600 text-center md:text-left text-sm">
+                        {activity.event}
+                      </p>
+                      <p className="text-gray-500 text-center md:text-left text-xs">
+                        {activity.date}
+                      </p>
                     </div>
                     <div className="text-right">
                       <p className="text-gray-500 text-xs">{activity.time}</p>

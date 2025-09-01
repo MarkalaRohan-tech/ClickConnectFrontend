@@ -1,5 +1,5 @@
-import React from 'react'
-import { X, Edit, Plus } from 'lucide-react'
+import React, { useState } from "react";
+import { X, Plus, Upload, Trash2, Loader } from "lucide-react";
 
 export const PortfolioModal = ({
   open,
@@ -10,13 +10,104 @@ export const PortfolioModal = ({
   setPortfolio,
   onConfirm,
 }) => {
+  const [uploading, setUploading] = useState(false);
+  const [uploadingIndex, setUploadingIndex] = useState(null);
+  const [uploadingProfile, setUploadingProfile] = useState(false);
+
   if (!open) return null;
+
+  // Cloudinary upload configuration
+  const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${
+    import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+  }/image/upload`;
+
+  const uploadImageToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", "portfolio"); // Optional: organize uploads in folders
+
+    try {
+      const response = await fetch(CLOUDINARY_URL, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const data = await response.json();
+      return data.secure_url;
+    } catch (error) {
+      console.error("Error uploading to Cloudinary:", error);
+      throw error;
+    }
+  };
+
+  const handleProfilePicUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5MB");
+      return;
+    }
+
+    try {
+      setUploadingProfile(true);
+      const imageUrl = await uploadImageToCloudinary(file);
+      setProfilePic(imageUrl);
+    } catch (error) {
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setUploadingProfile(false);
+    }
+  };
+
+  const handlePortfolioImageUpload = async (event, index) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5MB");
+      return;
+    }
+
+    try {
+      setUploadingIndex(index);
+      const imageUrl = await uploadImageToCloudinary(file);
+      handlePortfolioChange(index, imageUrl);
+    } catch (error) {
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setUploadingIndex(null);
+    }
+  };
 
   const handlePortfolioChange = (index, value) => {
     setPortfolio((prev) => prev.map((item, i) => (i === index ? value : item)));
   };
 
   const addPortfolioInput = () => {
+    if (portfolio.length >= 4) {
+      alert("Maximum 4 portfolio images allowed");
+      return;
+    }
     setPortfolio((prev) => [...prev, ""]);
   };
 
@@ -24,15 +115,25 @@ export const PortfolioModal = ({
     setPortfolio((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const removeProfilePic = () => {
+    setProfilePic("");
+  };
+
+  // Check if save button should be enabled
+  const canSave = profilePic || portfolio.some((url) => url.trim() !== "");
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
-      <div className="bg-black border border-white rounded-lg max-w-lg w-full p-6">
+      <div className="bg-black border border-white rounded-lg max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold text-white">
             Update Profile & Portfolio
           </h3>
-          <button onClick={onClose} className="text-white hover:text-gray-300">
+          <button
+            onClick={onClose}
+            className="text-white cursor-pointer hover:text-gray-300"
+          >
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -41,50 +142,128 @@ export const PortfolioModal = ({
           {/* Profile Picture */}
           <div>
             <label className="block text-white text-sm mb-2">
-              Profile Picture URL
+              Profile Picture
             </label>
-            <input
-              type="text"
-              placeholder="https://example.com/profile.jpg"
-              value={profilePic}
-              onChange={(e) => setProfilePic(e.target.value)}
-              className="w-full p-3 bg-black border border-white text-white rounded focus:outline-none focus:border-gray-400"
-            />
-            {profilePic && (
-              <img
-                src={profilePic}
-                alt="Profile Preview"
-                className="mt-3 w-24 h-24 rounded-full object-cover border border-white"
-                onError={(e) => (e.target.style.display = "none")}
-              />
-            )}
-          </div>
 
-          {/* Portfolio URLs */}
-          <div>
-            <label className="block text-white text-sm mb-2">
-              Portfolio Image URLs
-            </label>
-            {portfolio.map((url, index) => (
-              <div key={index} className="flex items-center gap-2 mb-2">
-                <input
-                  type="text"
-                  placeholder="https://example.com/image.jpg"
-                  value={url}
-                  onChange={(e) => handlePortfolioChange(index, e.target.value)}
-                  className="flex-1 p-3 bg-black border border-white text-white rounded focus:outline-none focus:border-gray-400"
+            {/* Current profile picture */}
+            {profilePic && (
+              <div className="relative mb-3 inline-block">
+                <img
+                  src={profilePic}
+                  alt="Profile Preview"
+                  className="w-24 h-24 rounded-full object-cover border border-white"
+                  onError={(e) => (e.target.style.display = "none")}
                 />
                 <button
-                  onClick={() => removePortfolioInput(index)}
-                  className="px-3 cursor-pointer py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  onClick={removeProfilePic}
+                  className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
                 >
-                  Remove
+                  <Trash2 className="w-3 h-3" />
                 </button>
               </div>
+            )}
+
+            {/* Upload button */}
+            <div className="relative">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePicUpload}
+                className="hidden"
+                id="profile-pic-upload"
+                disabled={uploadingProfile}
+              />
+              <label
+                htmlFor="profile-pic-upload"
+                className={`items-center gap-2 px-4 py-2 bg-white text-black rounded cursor-pointer hover:bg-gray-200 transition-colors inline-flex ${
+                  uploadingProfile ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                {uploadingProfile ? (
+                  <Loader className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4" />
+                )}
+                {uploadingProfile ? "Uploading..." : "Upload Profile Picture"}
+              </label>
+            </div>
+          </div>
+
+          {/* Portfolio Images */}
+          <div>
+            <label className="block text-white text-sm mb-2">
+              Portfolio Images (Maximum 4 images)
+            </label>
+            <div className="text-gray-400 text-xs mb-3">
+              Current: {portfolio.filter((url) => url.trim() !== "").length}/4
+              images
+            </div>
+
+            {portfolio.map((url, index) => (
+              <div
+                key={index}
+                className="mb-4 p-4 border border-gray-600 rounded"
+              >
+                {/* Show uploaded image */}
+                {url && (
+                  <div className="mb-3">
+                    <img
+                      src={url}
+                      alt={`Portfolio ${index + 1}`}
+                      className="w-32 h-32 object-cover rounded border border-white"
+                      onError={(e) => (e.target.style.display = "none")}
+                    />
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2">
+                  {/* Upload button for this portfolio item */}
+                  <div className="relative flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handlePortfolioImageUpload(e, index)}
+                      className="hidden"
+                      id={`portfolio-upload-${index}`}
+                      disabled={uploadingIndex === index}
+                    />
+                    <label
+                      htmlFor={`portfolio-upload-${index}`}
+                      className={` items-center gap-2 px-3 py-2 bg-white text-black rounded cursor-pointer hover:bg-gray-200 transition-colors inline-flex ${
+                        uploadingIndex === index
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                    >
+                      {uploadingIndex === index ? (
+                        <Loader className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Upload className="w-4 h-4" />
+                      )}
+                      {uploadingIndex === index
+                        ? "Uploading..."
+                        : url
+                        ? "Replace Image"
+                        : "Upload Image"}
+                    </label>
+                  </div>
+
+                  {/* Remove button */}
+                  <button
+                    onClick={() => removePortfolioInput(index)}
+                    className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
             ))}
+
+            {/* Add more portfolio items */}
             <button
               onClick={addPortfolioInput}
-              className="flex cursor-pointer items-center gap-2 mt-2 px-4 py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors"
+              disabled={portfolio.length >= 4}
+              className="flex cursor-pointer items-center gap-2 mt-2 px-4 py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
             >
               <Plus className="w-4 h-4" /> Add More
             </button>
@@ -100,10 +279,17 @@ export const PortfolioModal = ({
             </button>
             <button
               onClick={onConfirm}
-              disabled={!profilePic}
+              disabled={
+                !canSave ||
+                uploading ||
+                uploadingProfile ||
+                uploadingIndex !== null
+              }
               className="px-6 cursor-pointer py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Save
+              {uploading || uploadingProfile || uploadingIndex !== null
+                ? "Processing..."
+                : "Save"}
             </button>
           </div>
         </div>
@@ -295,8 +481,13 @@ export const ProfileEditModal = ({
   );
 };
 
-
-export const BookingModal = ({ booking, onClose, onConfirm, onReject,onComplete }) => {
+export const BookingModal = ({
+  booking,
+  onClose,
+  onConfirm,
+  onReject,
+  onComplete,
+}) => {
   if (!booking) return null;
 
   return (
@@ -310,7 +501,7 @@ export const BookingModal = ({ booking, onClose, onConfirm, onReject,onComplete 
         </div>
         <div className="space-y-3 text-white">
           <p>
-            <span className="font-medium">ClientId:</span>{" "}{booking.user}
+            <span className="font-medium">ClientId:</span> {booking.user}
           </p>
           <p>
             <span className="font-medium">Date:</span>
@@ -364,17 +555,15 @@ export const BookingModal = ({ booking, onClose, onConfirm, onReject,onComplete 
                 Confirm
               </button>
             </>
-                  )}
-                  {
-                    booking.status === "approved" && (
-                        <button
-                            onClick={onComplete}
-                            className="px-4 py-2 cursor-pointer bg-orange-400 text-white rounded hover:bg-orange-500 transition-colors"
-                        >
-                            Completed
-                        </button>
-                    )
-                  }
+          )}
+          {booking.status === "approved" && (
+            <button
+              onClick={onComplete}
+              className="px-4 py-2 cursor-pointer bg-orange-400 text-white rounded hover:bg-orange-500 transition-colors"
+            >
+              Completed
+            </button>
+          )}
           <button
             onClick={onClose}
             className="px-4 py-2 cursor-pointer bg-white text-black rounded hover:bg-gray-200 transition-colors"
@@ -386,6 +575,3 @@ export const BookingModal = ({ booking, onClose, onConfirm, onReject,onComplete 
     </div>
   );
 };
-
-
-

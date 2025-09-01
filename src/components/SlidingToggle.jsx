@@ -17,7 +17,7 @@ const SlidingToggle = ({ options, selected, onChange, className = "" }) => {
 
   return (
     <div
-      className={`relative bg-gray-100 rounded-full p-1 flex mb-6 ${className}`}
+      className={`relative bg-gray-100 rounded-full  p-1 flex mb-6 ${className}`}
     >
       {options.map((option, index) => (
         <button
@@ -25,7 +25,7 @@ const SlidingToggle = ({ options, selected, onChange, className = "" }) => {
           type="button"
           onClick={() => onChange(option)}
           className={`
-            relative z-10 flex-1 py-2 px-2 text-sm font-medium 
+            relative z-10 flex-1 py-2 px-2  text-xs md:text-md font-medium 
             transition-all duration-300 rounded-full text-center
             cursor-pointer
             ${
