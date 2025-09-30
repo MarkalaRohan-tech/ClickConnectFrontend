@@ -32,7 +32,7 @@ const Portfolio = () => {
   const { id } = useParams();
   
   useEffect(() => {
-    const fetchReviews = async () => {
+   const fetchReviews = async () => {
       try {
         const res = await api.get(`/api/reviews/${id}`);
         setReviews(res.data);

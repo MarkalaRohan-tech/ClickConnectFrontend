@@ -8,10 +8,15 @@ const ProfileCard = ({ profile }) => {
   return (
     <div className="w-[90%] mt-5 rounded-2xl bg-white m-2 flex flex-col hover:scale-105 transition-transform duration-200 shadow-md">
       <img
-        src={profile.profilePic}
+        src={`${profile.profilePic.replace(
+          "/upload/",
+          "/upload/w_500,q_auto,f_auto/"
+        )}`}
         alt={profile.name}
         className="w-full h-56 object-cover rounded-t-2xl"
+        loading="lazy"
       />
+
       <div className="p-4 space-y-2">
         {/* Name */}
         <h2 className="text-xl text-black font-bold flex items-center gap-2">

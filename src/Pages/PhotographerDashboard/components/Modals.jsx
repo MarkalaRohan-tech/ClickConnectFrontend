@@ -149,9 +149,13 @@ export const PortfolioModal = ({
             {profilePic && (
               <div className="relative mb-3 inline-block">
                 <img
-                  src={profilePic}
+                  src={profilePic.replace(
+                    "/upload/",
+                    "/upload/w_150,h_150,c_fill,q_auto,f_auto/"
+                  )}
                   alt="Profile Preview"
                   className="w-24 h-24 rounded-full object-cover border border-white"
+                  loading="lazy"
                   onError={(e) => (e.target.style.display = "none")}
                 />
                 <button
@@ -208,9 +212,13 @@ export const PortfolioModal = ({
                 {url && (
                   <div className="mb-3">
                     <img
-                      src={url}
+                      src={url.replace(
+                        "/upload/",
+                        "/upload/w_300,q_auto,f_auto/"
+                      )}
                       alt={`Portfolio ${index + 1}`}
                       className="w-32 h-32 object-cover rounded border border-white"
+                      loading="lazy"
                       onError={(e) => (e.target.style.display = "none")}
                     />
                   </div>
