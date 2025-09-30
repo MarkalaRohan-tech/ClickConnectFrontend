@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X, Plus, Upload, Trash2, Loader } from "lucide-react";
+import { getOptimizedImage } from "../../../optimizeImages";
 
 export const PortfolioModal = ({
   open,

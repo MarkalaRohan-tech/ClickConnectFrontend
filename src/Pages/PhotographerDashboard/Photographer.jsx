@@ -22,6 +22,7 @@ import {
 import { ToastContainer } from "react-toastify";
 import Notification from "../../../Services/Notification";
 import api from "../../api";
+import { getOptimizedImage } from "../../optimizeImages";
 
 const PhotographerDashboard = () => {
   const [profile, setProfile] = useState({
