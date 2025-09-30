@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Camera, MapPin, Tags, IndianRupee, Star,User } from "lucide-react";
+import { getOptimizedImage } from "../optimizeImages";
 
 const ProfileCard = ({ profile }) => {
   const navigate = useNavigate();
@@ -8,10 +9,7 @@ const ProfileCard = ({ profile }) => {
   return (
     <div className="w-[90%] mt-5 rounded-2xl bg-white m-2 flex flex-col hover:scale-105 transition-transform duration-200 shadow-md">
       <img
-        src={`${profile.profilePic.replace(
-          "/upload/",
-          "/upload/w_500,q_auto,f_auto/"
-        )}`}
+        src={getOptimizedImage(profile.profilePic, { w: 300, h: 224 })}
         alt={profile.name}
         className="w-full h-56 object-cover rounded-t-2xl"
         loading="lazy"

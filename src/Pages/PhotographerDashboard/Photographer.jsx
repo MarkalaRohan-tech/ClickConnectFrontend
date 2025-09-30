@@ -376,9 +376,10 @@ const PhotographerDashboard = () => {
             <div className="w-24 h-24 bg-white border border-black rounded-full mx-auto mb-4 overflow-hidden">
               {profile.profilePic ? (
                 <img
-                  src={profile.profilePic}
+                  src={getOptimizedImage(profile.profilePic, { w: 300, h: 224 })}
                   alt="Profile"
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
