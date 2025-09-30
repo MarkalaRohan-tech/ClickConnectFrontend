@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { X, Plus, Upload, Trash2, Loader } from "lucide-react";
-import { getOptimizedImage } from "../../../optimizeImages";
 
 export const PortfolioModal = ({
   open,
@@ -150,7 +149,10 @@ export const PortfolioModal = ({
             {profilePic && (
               <div className="relative mb-3 inline-block">
                 <img
-                  src={getOptimizedImage(profilePic, { w: 150, h: 150 })}
+                  src={profilePic.replace(
+                    "/upload/",
+                    "/upload/w_150,h_150,c_fill,q_auto,f_auto/"
+                  )}
                   alt="Profile Preview"
                   className="w-24 h-24 rounded-full object-cover border border-white"
                   loading="lazy"
@@ -210,7 +212,10 @@ export const PortfolioModal = ({
                 {url && (
                   <div className="mb-3">
                     <img
-                      src={getOptimizedImage(profile.profilePic, { w: 300, h: 224 })}
+                      src={url.replace(
+                        "/upload/",
+                        "/upload/w_200,q_auto,f_auto/"
+                      )}
                       alt={`Portfolio ${index + 1}`}
                       className="w-32 h-32 object-cover rounded border border-white"
                       loading="lazy"
